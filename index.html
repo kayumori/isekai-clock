@@ -20,7 +20,6 @@
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
   body{
-    display:flex;align-items:center;justify-content:center;
     height:100vh;
     background:transparent;
     font-family:'Cinzel','Shippori Mincho',serif;
@@ -28,107 +27,122 @@
     overflow:hidden;
   }
 
-  /* パネル自体が埋め込み枠いっぱいに広がる（外側の余白を無くす） */
+  /* パネルは埋め込み枠いっぱい */
   .window{
     position:relative;
     width:100%;height:100%;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:3vmin 5vmin;
+    gap:0.4em;
+    padding:4%;
     color:var(--ink);
     background:
       radial-gradient(120% 160% at 50% 0%, rgba(80,60,140,.35), transparent 60%),
       linear-gradient(160deg, var(--panel-1), var(--panel-2));
-    border:0.6vmin solid var(--gold-deep);
-    border-radius:3vmin;
+    border:0.4vmin solid var(--gold-deep);
+    border-radius:2.4vmin;
     box-shadow:
       0 0 0 0.2vmin rgba(0,0,0,.6),
       0 0 5vmin rgba(120,90,200,.25),
       inset 0 0 5vmin rgba(0,0,0,.55);
   }
   .window::before{
-    content:"";position:absolute;inset:1.4vmin;border-radius:2vmin;
-    border:0.25vmin solid rgba(217,182,92,.45);
+    content:"";position:absolute;inset:1.2vmin;border-radius:1.6vmin;
+    border:0.22vmin solid rgba(217,182,92,.45);
     pointer-events:none;
   }
   .corner{
-    position:absolute;width:2vmin;height:2vmin;border-radius:50%;
+    position:absolute;width:1.8vmin;height:1.8vmin;border-radius:50%;
     background:radial-gradient(circle at 35% 30%, var(--gold-bright), var(--gold) 45%, var(--gold-deep) 100%);
-    box-shadow:0 0 1.5vmin rgba(245,226,163,.7);
+    box-shadow:0 0 1.4vmin rgba(245,226,163,.7);
   }
-  .corner.tl{top:2vmin;left:2vmin}.corner.tr{top:2vmin;right:2vmin}
-  .corner.bl{bottom:2vmin;left:2vmin}.corner.br{bottom:2vmin;right:2vmin}
+  .corner.tl{top:1.8vmin;left:1.8vmin}.corner.tr{top:1.8vmin;right:1.8vmin}
+  .corner.bl{bottom:1.8vmin;left:1.8vmin}.corner.br{bottom:1.8vmin;right:1.8vmin}
 
-  .inner{
-    display:inline-flex;flex-direction:column;align-items:stretch;
-  }
-
+  /* 時刻：フォントサイズはJSで枠に合わせて最大化 */
   .time{
-    text-align:center;
     font-weight:700;
-    font-size:18vmin;
-    line-height:1;
-    letter-spacing:0.5vmin;
+    line-height:.92;
+    letter-spacing:0.02em;
     color:var(--gold-bright);
-    text-shadow:
-      0 0 3vmin rgba(245,226,163,.45),
-      0 0.4vmin 0 rgba(0,0,0,.5);
+    text-shadow:0 0 .18em rgba(245,226,163,.45), 0 .03em 0 rgba(0,0,0,.5);
     font-variant-numeric:tabular-nums;
+    white-space:nowrap;
   }
   .time .colon{
     color:var(--gold);
     animation:pulse 2s ease-in-out infinite;
-    margin:0 0.4vmin;
+    margin:0 .04em;
   }
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
-  .divider{
-    display:flex;align-items:center;justify-content:center;
-    gap:1.6vmin;margin:1.8vmin 0 1.4vmin;color:var(--gold-deep);
-  }
-  .divider .line{height:0.2vmin;flex:1;background:linear-gradient(90deg,transparent,rgba(217,182,92,.55),transparent)}
-  .divider .rune{font-size:2.2vmin;color:var(--gold)}
-
   .meta{
-    display:flex;justify-content:space-between;align-items:baseline;
-    gap:4vmin;
+    display:flex;align-items:baseline;justify-content:center;
+    gap:1.2em;
     font-family:'Shippori Mincho',serif;
-    font-size:3.2vmin;color:var(--ink-dim);letter-spacing:0.3vmin;
+    color:var(--ink-dim);letter-spacing:0.05em;
+    white-space:nowrap;
   }
   .meta .date{color:var(--ink)}
   .meta .dow{color:var(--gold);font-weight:600}
 </style>
 </head>
 <body>
-  <div class="window">
+  <div class="window" id="win">
     <span class="corner tl"></span><span class="corner tr"></span>
     <span class="corner bl"></span><span class="corner br"></span>
 
-    <div class="inner">
-      <div class="time" id="time">
-        <span id="hh">00</span><span class="colon">:</span><span id="mm">00</span>
-      </div>
+    <div class="time" id="time">
+      <span id="hh">00</span><span class="colon">:</span><span id="mm">00</span>
+    </div>
 
-      <div class="divider"><span class="line"></span><span class="rune">❖</span><span class="line"></span></div>
-
-      <div class="meta">
-        <span class="date" id="date">----</span>
-        <span class="dow" id="dow">----</span>
-      </div>
+    <div class="meta" id="meta">
+      <span class="date" id="date">----</span>
+      <span class="dow" id="dow">----</span>
     </div>
   </div>
 
 <script>
   const dows = ['日曜','月曜','火曜','水曜','木曜','金曜','土曜'];
-  function pad(n){return String(n).padStart(2,'0');}
+  const pad = n => String(n).padStart(2,'0');
+  const win = document.getElementById('win');
+  const time = document.getElementById('time');
+  const meta = document.getElementById('meta');
+
   function tick(){
     const d = new Date();
     document.getElementById('hh').textContent = pad(d.getHours());
     document.getElementById('mm').textContent = pad(d.getMinutes());
     document.getElementById('date').textContent = (d.getMonth()+1) + '月 ' + d.getDate() + '日';
     document.getElementById('dow').textContent = '— ' + dows[d.getDay()] + '日 —';
+    fit();
   }
+
+  // 時刻を枠いっぱいに最大化（幅と高さの両方に収める）
+  function fit(){
+    const cs = getComputedStyle(win);
+    const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+    const availW = win.clientWidth  - padX;
+    const availH = win.clientHeight - padY;
+
+    // 時刻が使える高さ：全体の約78%（残りは日付行）
+    const timeH = availH * 0.78;
+
+    // 基準サイズで実測してスケール
+    const base = 100;
+    time.style.fontSize = base + 'px';
+    const ratioW = availW / time.scrollWidth;
+    const ratioH = timeH  / time.scrollHeight;
+    const fs = Math.max(8, base * Math.min(ratioW, ratioH));
+    time.style.fontSize = fs + 'px';
+
+    // 日付行は時刻に対する比率で
+    meta.style.fontSize = Math.max(8, fs * 0.17) + 'px';
+  }
+
   tick();
   setInterval(tick, 1000);
+  window.addEventListener('resize', fit);
 </script>
 </body>
 </html>
