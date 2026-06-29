@@ -6,7 +6,7 @@
 <title>異世界RPG時計</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cinzel+Decorative:wght@700&family=Shippori+Mincho:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Shippori+Mincho:wght@600&display=swap" rel="stylesheet">
 <style>
   :root{
     --gold:#d9b65c;
@@ -21,83 +21,72 @@
   html,body{height:100%}
   body{
     display:flex;align-items:center;justify-content:center;
-    min-height:100vh;
+    height:100vh;
     background:transparent;
     font-family:'Cinzel','Shippori Mincho',serif;
     -webkit-font-smoothing:antialiased;
     overflow:hidden;
   }
 
+  /* 枠のサイズに合わせて vmin で全体がスケールする */
   .window{
     position:relative;
-    width:300px;
-    padding:22px 26px 20px;
+    padding:4.5vmin 6vmin;
     color:var(--ink);
     background:
-      radial-gradient(120% 140% at 50% 0%, rgba(80,60,140,.35), transparent 60%),
+      radial-gradient(120% 160% at 50% 0%, rgba(80,60,140,.35), transparent 60%),
       linear-gradient(160deg, var(--panel-1), var(--panel-2));
-    border:2px solid var(--gold-deep);
-    border-radius:14px;
+    border:0.6vmin solid var(--gold-deep);
+    border-radius:3vmin;
     box-shadow:
-      0 0 0 1px rgba(0,0,0,.6),
-      0 0 24px rgba(120,90,200,.25),
-      inset 0 0 26px rgba(0,0,0,.55);
+      0 0 0 0.2vmin rgba(0,0,0,.6),
+      0 0 5vmin rgba(120,90,200,.25),
+      inset 0 0 5vmin rgba(0,0,0,.55);
   }
-  /* inner gilt line */
   .window::before{
-    content:"";position:absolute;inset:6px;border-radius:9px;
-    border:1px solid rgba(217,182,92,.45);
+    content:"";position:absolute;inset:1.4vmin;border-radius:2vmin;
+    border:0.25vmin solid rgba(217,182,92,.45);
     pointer-events:none;
   }
-  /* corner gems */
   .corner{
-    position:absolute;width:9px;height:9px;border-radius:50%;
+    position:absolute;width:2vmin;height:2vmin;border-radius:50%;
     background:radial-gradient(circle at 35% 30%, var(--gold-bright), var(--gold) 45%, var(--gold-deep) 100%);
-    box-shadow:0 0 6px rgba(245,226,163,.7);
+    box-shadow:0 0 1.5vmin rgba(245,226,163,.7);
   }
-  .corner.tl{top:9px;left:9px}.corner.tr{top:9px;right:9px}
-  .corner.bl{bottom:9px;left:9px}.corner.br{bottom:9px;right:9px}
-
-  .crest{
-    text-align:center;
-    font-family:'Cinzel Decorative',serif;
-    font-size:11px;letter-spacing:3px;
-    color:var(--gold);
-    text-transform:uppercase;
-    margin-bottom:2px;
-  }
-  .crest::before,.crest::after{content:"✦";margin:0 7px;color:var(--gold-deep);font-size:9px;vertical-align:middle}
+  .corner.tl{top:2vmin;left:2vmin}.corner.tr{top:2vmin;right:2vmin}
+  .corner.bl{bottom:2vmin;left:2vmin}.corner.br{bottom:2vmin;right:2vmin}
 
   .time{
     text-align:center;
     font-weight:700;
-    font-size:62px;
-    line-height:1.05;
-    letter-spacing:2px;
+    font-size:18vmin;
+    line-height:1;
+    letter-spacing:0.5vmin;
     color:var(--gold-bright);
     text-shadow:
-      0 0 12px rgba(245,226,163,.45),
-      0 2px 0 rgba(0,0,0,.5);
+      0 0 3vmin rgba(245,226,163,.45),
+      0 0.4vmin 0 rgba(0,0,0,.5);
     font-variant-numeric:tabular-nums;
   }
   .time .colon{
     color:var(--gold);
     animation:pulse 2s ease-in-out infinite;
-    margin:0 2px;
+    margin:0 0.4vmin;
   }
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 
   .divider{
     display:flex;align-items:center;justify-content:center;
-    gap:8px;margin:8px 0 6px;color:var(--gold-deep);
+    gap:1.6vmin;margin:1.8vmin 0 1.4vmin;color:var(--gold-deep);
   }
-  .divider .line{height:1px;flex:1;background:linear-gradient(90deg,transparent,rgba(217,182,92,.55),transparent)}
-  .divider .rune{font-size:10px;color:var(--gold)}
+  .divider .line{height:0.2vmin;flex:1;background:linear-gradient(90deg,transparent,rgba(217,182,92,.55),transparent)}
+  .divider .rune{font-size:2.2vmin;color:var(--gold)}
 
   .meta{
     display:flex;justify-content:space-between;align-items:baseline;
+    gap:4vmin;
     font-family:'Shippori Mincho',serif;
-    font-size:12px;color:var(--ink-dim);letter-spacing:1px;
+    font-size:3.2vmin;color:var(--ink-dim);letter-spacing:0.3vmin;
   }
   .meta .date{color:var(--ink)}
   .meta .dow{color:var(--gold);font-weight:600}
@@ -107,8 +96,6 @@
   <div class="window">
     <span class="corner tl"></span><span class="corner tr"></span>
     <span class="corner bl"></span><span class="corner br"></span>
-
-    <div class="crest">Adventurer's Clock</div>
 
     <div class="time" id="time">
       <span id="hh">00</span><span class="colon">:</span><span id="mm">00</span>
@@ -133,7 +120,6 @@
     document.getElementById('dow').textContent = '— ' + dows[d.getDay()] + '日 —';
   }
   tick();
-  // 分が変わるタイミングに合わせて更新
   setInterval(tick, 1000);
 </script>
 </body>
